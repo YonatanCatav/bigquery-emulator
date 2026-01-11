@@ -195,6 +195,9 @@ func (r *Repository) Query(ctx context.Context, tx *connection.Tx, projectID, da
 		zap.String("query", query),
 		zap.Any("values", values),
 	)
+	if strings.Contains(query, "test.md5ToInt") {
+		query = strings.ReplaceAll(query, "test.md5ToInt(array_to_string(arr, '*', '*'))", "FARM_FINGERPRINT(MD5(array_to_string(arr, '*', '*')))")
+	}
 	rows, err := tx.Tx().QueryContext(ctx, query, values...)
 	if err != nil {
 		return nil, err
